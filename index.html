@@ -12,12 +12,206 @@
 
 		<!-- Theme used for syntax highlighted code -->
 		<link rel="stylesheet" href="plugin/highlight/monokai.css" id="highlight-theme">
+		<style>
+			body {
+				background-color: #272822!important;
+			}
+
+			h2 {
+				color: #f92672!important;
+			}
+
+			.reveal p {
+				color: #a6e22e;
+			}
+
+			.reveal pre {
+				box-shadow: none;
+			}
+			
+			.slides {
+				width: 1000px!important;
+			}
+		</style>
 	</head>
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+				<section data-markdown data-separator-notes="^Note:">
+					<script type="text/template">
+						## 👋 Sup
+						```html []
+						<!-- Sup? -->
+						<sup>👋</sup>
+						```
+
+						Note:
+						Sup everybody! Have you ever imagined that you can implement a react store using only one hook?
+					</script>
+				</section>
+				<section data-markdown data-separator-notes="^Note:">
+					<script type="text/template">
+						```js
+						const useChange = TypeScript + Object.defineProperty + ♥️;
+						export default useChange;
+						```
+
+						Note:
+						Meet use-change! It's made with TypeScript, a pinch of love and Object.defineProperty function.
+					</script>
+				</section>
+				<section data-markdown data-separator-notes="^Note:">
+					<script type="text/template">
+						```ts [3|6|6-12]
+							import useChange from 'use-change';
+
+							const store = { count: 0 };
+
+							const MyComponent = (): ReactElement => {
+								const [count, setCount] = useChange(store, 'count');
+								return (
+									<>
+										<p>{count}</p>
+										<button onClick={() => setCount(count + 1)}>
+											Increment
+										</button>
+									</>
+								);
+							}
+						```
+						Note:
+						- To get started you need to define an object of any shape
+						- Invoke useChange hook providing a property name that you're going to listen to
+						- Then use the returned tuple the same way as you'd use the built-in useState react hook
+					</script>
+				</section>
+				<section data-markdown data-separator-notes="^Note:">
+					<script type="text/template">
+						```ts [5-8]
+							import useChange from 'use-change';
+
+							const store = { count: 0 };
+
+							// update count every second
+							setInterval(() => {
+								store.count += 1; 
+							}, 1000);
+
+							const MyComponent = (): ReactElement => {
+								const [count, setCount] = useChange(store, 'count');
+								// ...
+						```
+						Note:
+						When property "count" is changed in any way, the component is going to be updated automatically.
+					</script>
+				</section>
+
+				<section data-markdown data-separator-notes="^Note:">
+					<script type="text/template">
+					```ts []
+					import useChange, { 
+						Provider as UseChangeProvider 
+					} from 'use-change';
+					import MyComponent from './MyComponent';
+					
+					const store = { count: 0 };
+					
+					const App = (): ReactElement => (
+						<UseChangeProvider value={store}>
+							<MyComponent />
+						</UseChangeProvider>
+					)
+					
+					export default App;
+					```
+					Note:
+					To make the store object be available globally within your application you can wrap your application by context provider and pass the store object as its value.
+				</script>
+				</section>
+				<section data-markdown data-separator-notes="^Note:">
+					<script type="text/template">
+						```ts []
+						// ./MyComponent.tsx
+						import React, { ReactElement } from 'react'
+						import useChange from 'use-change';
+
+						const MyComponent = (): ReactElement => {
+							const [count, setCount] = useChange('count');
+							
+							return (
+								<>
+									<p>{count}</p>
+									<button onClick={() => setCount(count + 1)}>
+										Increment
+									</button>
+								</>
+							);
+						}
+
+						export default MyComponent;
+						```
+						Note:
+						At this case you don't have to provide store object every time when useChange hook is invoked
+					</script>
+				</section>
+				<section data-markdown data-separator-notes="^Note:">
+					<script type="text/template">
+						```ts [|1-7|8-13]
+						class Foo {
+							public helloFoo = 'foo';
+						}
+						
+						class Bar {
+							public helloBar = 'bar';
+						}
+						
+						export class RootStore {
+							public readonly foo = new Foo();
+							public readonly bar = new Bar();
+						}
+
+						export default new RootStore();
+						```
+
+						Note:
+						- For bigger applications you will need a more complex store object. For that it's recommended to use classes instead of object literal. 
+						- You can create multiple classes that responsible for different aspects of your application 
+						- ...and instances of these classes can be assembled into one root store.
+					</script>
+				</section>
+				<section data-markdown data-separator-notes="^Note:">
+					<script type="text/template">
+						```ts
+						const [helloFoo, setHelloFoo] 
+							= useChange(({ foo }: RootStore) => foo, 'helloFoo');
+
+						```
+						Note:
+						To manage such store by accessing it from React components there is one thing called "store selector". This is a simple function that needs to return an object where you want to get a property from.
+						At this example we want to get property called 'helloFoo' from store.foo object. For that we select a piece of store which contains that property by providing the function as first argument.
+					</script>
+				</section>
+				<section data-markdown data-separator-notes="^Note:">
+					<script type="text/template">
+						![](./use-change.png)
+
+						Note:
+						Components are updated only if a property that they listen is changed and one property can be listened by multiple components.
+					</script>
+				</section>
+				<section data-markdown data-separator-notes="^Note:">
+					<script type="text/template">
+						😘
+
+						Keep it stupid simple!
+
+						Note:
+						This presentation doesn't cover everything that you need to know about useChange.
+						The library also includes additional things that allow to listen property changes outside of components, and also things that allow to get store data without triggering re-render.
+						For more information please take a look at project README.
+						Thank you for your attention! Bye!
+					</script>
+				</section>
 			</div>
 		</div>
 
